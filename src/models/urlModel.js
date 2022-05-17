@@ -7,6 +7,7 @@ const urlSchema = new mongoose.Schema({
         trim: true,
         lowercase : true
     },
+    
     longUrl: {
         type: String,
         required: 'Long Url is required',

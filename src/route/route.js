@@ -1,11 +1,11 @@
 const express = require('express');
-const { shortUrl } = require('../controller/urlController');
+const { shortUrl, redirectToSource } = require('../controller/urlController');
 const router = express.Router();
 
 
 
 router.post("/url/shorten", shortUrl);
-router.get("/:urlCode" );
+router.get("/:urlCode", redirectToSource);
 
 
 

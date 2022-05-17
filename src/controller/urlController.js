@@ -37,7 +37,7 @@ try{
 
     data['urlCode'] = createShortID
 
-    let createUrl = baseUrl+ "/"+ createShortID
+    let createUrl = baseUrl+"/"+ createShortID
     
     data['shortUrl'] = createUrl
 
@@ -54,7 +54,32 @@ try{
 
 
 
-module.exports = {shortUrl}
+const redirectToSource = async (req,res)=>{
+    try{
+      let url = req.params.urlCode
+      
+      let verifyUrl = shortID.isValid(url)
+
+      if(!verifyUrl){
+          return res.status(400).send({status : false, message : "This is not a valid URL CODE"})
+      }
+      
+      let findUrl = await urlModel.findOne({urlCode : url})
+
+      if(!findUrl){
+          return res.status(400).send({status : false, message : "No url with this code"})
+      }else{
+          return res.status(307).redirect(findUrl.longUrl)
+      }
+    }
+    catch(err){
+        return res.status(500).send({status : false, message : err.message})
+    }
+}
+
+
+
+module.exports = {shortUrl, redirectToSource}
 
 
 
