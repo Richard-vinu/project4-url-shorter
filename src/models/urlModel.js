@@ -19,4 +19,4 @@ const urlSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-module.exports = mongoose.model('urlShortnerProject_url', urlSchema)
+module.exports = mongoose.model('url', urlSchema)
