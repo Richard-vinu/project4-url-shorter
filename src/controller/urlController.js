@@ -1,7 +1,9 @@
 const validUrl = require('valid-url')
 const urlModel = require('../models/urlModel')
 const shortID = require('shortid')
-const { regexpToText } = require('nodemon/lib/utils')
+const { create } = require('../models/urlModel')
+
+let baseUrl = 'https://localhost:3000'
 
 const shortUrl = async (req,res)=>{
 
@@ -28,11 +30,20 @@ try{
     let findUrl = await urlModel.findOne({longUrl })
 
     if(findUrl){
-         return res.status()
+         return res.status(400).send({status : false, message : "this url already exists"})
     }
 
     let createShortID = shortID.generate()
+
+    data['urlCode'] = createShortID
+
+    let createUrl = baseUrl+ "/"+ createShortID
     
+    data['shortUrl'] = createUrl
+
+    let createData = await urlModel.create(data)
+
+    return res.status(201).send({status : true, data : createData})
 
 }
  catch(err){
