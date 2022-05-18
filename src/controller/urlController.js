@@ -23,10 +23,10 @@ redisClient.on("connect", async function () {
 
 const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
 const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
+
 const shortUrl = async (req,res)=>{
 
 try{
-
     let data =req.body
     
     if(Object.keys(data).length==0){
@@ -46,7 +46,6 @@ try{
     }
 
     let findUrl = await urlModel.findOne({longUrl })
-
     if(findUrl){
          return res.status(400).send({status : false, message : "this url already exists"})
     }
@@ -61,6 +60,11 @@ try{
 
     let createData = await urlModel.create(data)
 
+
+    await SET_ASYNC(`${longUrl}`, JSON.stringify(data),);
+    await SET_ASYNC(`${urlCode}`, JSON.stringify(data.longUrl),)
+
+    
     return res.status(201).send({status : true, data : createData})
 
 }
@@ -74,15 +78,21 @@ try{
 
 const redirectToSource = async (req,res)=>{
     try{
-      let url = req.params.urlCode
+      let urlCode= req.params.urlCode
       
-      let verifyUrl = shortID.isValid(url)
+      let verifyUrl = shortID.isValid(urlCode)
 
-      if(!verifyUrl){
+        if(!verifyUrl){
           return res.status(400).send({status : false, message : "This is not a valid URL CODE"})
       }
+      let cache = await GET_ASYNC(`${urlCode}`)
+      if(cache){ return res.status(302).redirect(JSON.parse(cache))}
       
       let findUrl = await urlModel.findOne({urlCode : url})
+
+
+   
+
 
       if(!findUrl){
           return res.status(400).send({status : false, message : "No url with this code"})
