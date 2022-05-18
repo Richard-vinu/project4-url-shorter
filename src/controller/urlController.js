@@ -1,9 +1,9 @@
 const validUrl = require('valid-url')
 const urlModel = require('../models/urlModel')
 const shortID = require('shortid')
-const { create } = require('../models/urlModel')
 
-let baseUrl = 'https://localhost:3000'
+
+let baseUrl = 'http://localhost:3000'
 
 const shortUrl = async (req,res)=>{
 
@@ -27,7 +27,7 @@ try{
         } 
     }
 
-    let findUrl = await urlModel.findOne({longUrl })
+    let findUrl = await urlModel.findOne({longUrl})
 
     if(findUrl){
          return res.status(400).send({status : false, message : "this url already exists"})
@@ -42,7 +42,6 @@ try{
     data['shortUrl'] = createUrl
 
     let createData = await urlModel.create(data)
-
     return res.status(201).send({status : true, data : createData})
 
 }
@@ -69,7 +68,7 @@ const redirectToSource = async (req,res)=>{
       if(!findUrl){
           return res.status(400).send({status : false, message : "No url with this code"})
       }else{
-          return res.status(307).redirect(findUrl.longUrl)
+          return res.status(302).redirect(findUrl.longUrl)
       }
     }
     catch(err){
