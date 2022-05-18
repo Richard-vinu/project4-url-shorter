@@ -41,11 +41,6 @@ try{
         return res.status(400).send({status:false, message:"please provide requires input feild"})
     }
 
-    let url = await GET_ASYNC(`${longUrl}`)  
-    if(url){ 
-        return res.status(201).send( {status :true ,data : JSON.parse(url)})
-    }
-
     if(longUrl){ 
         let isUrl = validUrl.isUri(longUrl)
         if(!isUrl){
@@ -53,9 +48,9 @@ try{
         } 
     }
 
-    let findUrl = await urlModel.findOne({longUrl })
-    if(findUrl){
-         return res.status(400).send({status : false, message : "this url already exists"})
+    let url = await GET_ASYNC(`${longUrl}`)  
+    if(url){ 
+        return res.status(201).send({status : true, data : JSON.parse(url)})
     }
 
     let createShortID = shortID.generate()
@@ -68,7 +63,7 @@ try{
 
     let createData = await urlModel.create(data)
 
-    await SET_ASYNC(`${urlCode}`, JSON.stringify(createData))
+    await SET_ASYNC(`${longUrl}`, JSON.stringify(createData))
 
     return res.status(201).send({status : true, data : createData})
 }
@@ -109,7 +104,7 @@ const redirectToSource = async (req,res)=>{
 
 
 
-module.exports = {shortUrl, redirectToSource}
+module.exports = {shortUrl,redirectToSource }
 
 
 
