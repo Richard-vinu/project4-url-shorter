@@ -83,20 +83,20 @@ const redirectToSource = async (req,res)=>{
       let urlCode= req.params.urlCode
       
       let verifyUrl = shortID.isValid(urlCode)
-
         if(!verifyUrl){
           return res.status(400).send({status : false, message : "This is not a valid URL CODE"})
       }
-      let cache = await GET_ASYNC(`${urlCode}`, JSON.stringify(urlCode))
+      
+      let cache = await GET_ASYNC(`${urlCode}`)
       if(cache){ return res.status(302).redirect(JSON.parse(cache))}
       
       let findUrl = await urlModel.findOne({urlCode : urlCode})
 
       if(!findUrl){
-          return res.status(400).send({status : false, message : "No url with this code"})
+        return res.status(400).send({status : false, message : "No url with this code"})
       }else{
-          let cache = await SET_ASYNC(`${urlCode}`, JSON.stringify(findUrl.longUrl))
-          return res.status(302).redirect(JSON.parse(cache))
+        await SET_ASYNC(`${urlCode}`,JSON.stringify(findUrl.longUrl))
+        return res.status(302).redirect( findUrl.longUrl)
       }
     }
     catch(err){
