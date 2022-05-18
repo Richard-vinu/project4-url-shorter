@@ -5,6 +5,24 @@ const redis = require('redis');
 
 const {promisify} = require('util')
 
+//Connect to redis
+const redisClient = redis.createClient(
+    17250,
+    "redis-17250.c264.ap-south-1-1.ec2.cloud.redislabs.com",
+    { no_ready_check: true }
+);
+redisClient.auth("jZAOYkBGd1wFBP7h0Fdgk0J9LzFZFq5R", function (err) {
+    if (err) throw err;
+});
+
+redisClient.on("connect", async function () {
+    console.log("Connected to Redis..");
+});
+
+//Connection setup for redis
+
+const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
+const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 
 let baseUrl = 'http://localhost:3000'
 
@@ -23,10 +41,9 @@ try{
         return res.status(400).send({status:false, message:"please provide requires input feild"})
     }
 
-    let cache = await GET_ASYNC(`${longUrl}`)
-        
-    if(cache){ 
-        return res.status(201).send( {status :true ,data : JSON.parse(cache)})
+    let url = await GET_ASYNC(`${longUrl}`)  
+    if(url){ 
+        return res.status(201).send( {status :true ,data : JSON.parse(url)})
     }
 
     if(longUrl){ 
@@ -61,24 +78,7 @@ try{
   }
 }
 
-//Connect to redis
-const redisClient = redis.createClient(
-    17250,
-    "redis-17250.c264.ap-south-1-1.ec2.cloud.redislabs.com",
-    { no_ready_check: true }
-);
-redisClient.auth("jZAOYkBGd1wFBP7h0Fdgk0J9LzFZFq5R", function (err) {
-    if (err) throw err;
-});
 
-redisClient.on("connect", async function () {
-    console.log("Connected to Redis..");
-});
-
-//Connection setup for redis
-
-const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
-const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 
 
 const redirectToSource = async (req,res)=>{
