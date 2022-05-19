@@ -91,7 +91,7 @@ const redirectToSource = async (req,res)=>{
       let findUrl = await urlModel.findOne({urlCode : urlCode})
 
       if(!findUrl){
-        return res.status(400).send({status : false, message : "No url with this code"})
+        return res.status(404).send({status : false, message : "No url with this code"})
       }else{
         await SET_ASYNC(`${urlCode}`,JSON.stringify(findUrl.longUrl))
         return res.status(302).redirect( findUrl.longUrl)
