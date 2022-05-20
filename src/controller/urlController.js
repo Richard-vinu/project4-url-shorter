@@ -55,7 +55,7 @@ try{
 
     let createShortID = shortID.generate()
 
-    data['urlCode'] = createShortID
+    data['urlCode'] = createShortID.toLowerCase()
 
     let createUrl = baseUrl+"/"+ createShortID
     
@@ -64,7 +64,7 @@ try{
     let createData = await urlModel.create(data)
     
     if(createData){
-    await SET_ASYNC(`${longUrl}`, JSON.stringify({urlCode : createShortID, longUrl : data.longUrl, shortUrl : createUrl}))
+    await SET_ASYNC(`${longUrl}`, JSON.stringify({urlCode : createShortID.toLowerCase(), longUrl : data.longUrl, shortUrl : createUrl}))
     return res.status(201).send({status : true, data : {urlCode : createShortID, longUrl : data.longUrl, shortUrl : createUrl}})
     }
 
