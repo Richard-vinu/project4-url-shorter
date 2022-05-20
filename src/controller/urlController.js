@@ -62,10 +62,12 @@ try{
     data['shortUrl'] = createUrl
 
     let createData = await urlModel.create(data)
-
-    await SET_ASYNC(`${longUrl}`, JSON.stringify(createData))
-
-    return res.status(201).send({status : true, data : createData})
+    
+    if(createData){
+    await SET_ASYNC(`${longUrl}`, JSON.stringify(data))
+    return res.status(201).send({status : true, data : data})
+    }
+    
 }
  catch(err){
       return res.status(500).send({status:"false",message:err.message})
